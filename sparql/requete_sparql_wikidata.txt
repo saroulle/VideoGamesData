@@ -1,9 +1,3 @@
-Notre requête pour sortir ce dont on a besoin de wikidata.
-**Attention :** il faut qu'on corrige les `filter`.
-
----
-
-```
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
@@ -16,15 +10,15 @@ PREFIX bd: <http://www.bigdata.com/rdf#>
 
 
 select ?name ?nameLabel ?seriesLabel ?platformLabel (year(?pub_date) as ?pub_year) ?genreLabel ?publisherLabel ?developerLabel ?image ?website ?esrbLabel ?pegiLabel ?bnf ?freebase 
-{
+where {
   ?name wdt:P31 wd:Q7889.
   
   ?name wdt:P400 ?platform. 
   ?name wdt:P123 ?publisher.
-  optional{?name wdt:P178 ?developer.}
-  #?name wdt:P136 ?genre. # attention peut-être plusieurs résultats
-  ?name wdt:P577 ?pud_date.
+  ?name wdt:P136 ?genre. # attention peut-être plusieurs résultats
+  ?name wdt:P577 ?pub_date.
   
+  optional{?name wdt:P178 ?developer.}
   optional{?name wdt:P18 ?image.}
   optional{?name wdt:P179 ?series.}
   optional{?name wdt:P856 ?website.}
@@ -32,15 +26,11 @@ select ?name ?nameLabel ?seriesLabel ?platformLabel (year(?pub_date) as ?pub_yea
   optional{?name wdt:P908 ?pegi.}
   optional{?name wdt:P268 ?bnf.}
   optional{?name wdt:P646 ?freebase.}  
-  
-    
-  #filter(?pub_date > "1979-12-31T00:00:00Z"^^xsd:dateTime)
-  #filter(?pub_date < "2017-01-01T00:00:00Z"^^xsd:dateTime)
+
+  filter((?pub_date > "1979-12-31T00:00:00Z"^^xsd:dateTime) && (?pub_date < "2017-01-01T00:00:00Z"^^xsd:dateTime))
   
  SERVICE wikibase:label{
    bd:serviceParam wikibase:language "[AUTO_LANGUAGE], fr"
                    }
 }
-  
-limit 50
-```
+ 
