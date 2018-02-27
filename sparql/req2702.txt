@@ -1,0 +1,38 @@
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+
+select ?nameLabel ?seriesLabel ?plateformLabel (year(?pub_date) as ?pub_year) 
+?publisherLabel ?developerLabel ?website ?esrbLabel ?pegiLabel ?bnf ?musicbrainz
+where {
+  ?name wdt:P31 wd:Q7889.
+  ?name wdt:P400 ?plateform.
+  ?name wdt:P123 ?publisher.
+  ?name wdt:P577 ?pub_date.
+  optional{?name wdt:P178 ?developer.}
+  optional{?name wdt:P179 ?series.}
+  optional{?name wdt:P856 ?website.}
+  optional{?name wdt:P852 ?esrb.}
+  optional{?name wdt:P908 ?pegi.}
+  optional{?name wdt:P268 ?bnf.} 
+  optional{?name wdt:P436 ?musicbrainz.} 
+
+  filter((?pub_date > "1999-12-31T00:00:00Z"^^xsd:dateTime) && (?pub_date < "2016-01-01T00:00:00Z"^^xsd:dateTime))
+  filter (
+#    regex(str(?plateform), "Q56942") || #Wii-U
+    regex(str(?plateform), "Q8079")  || #Wii 
+    regex(str(?plateform), "Q48263") || #Xbox 360
+#    regex(str(?plateform), "Q13361286") || #Xbox One
+    regex(str(?plateform), "Q132020") || # Xbox
+#    regex(str(?plateform), "Q10677") || # PS (1)
+    regex(str(?plateform), "Q10683") || # PS3
+#    regex(str(?plateform), "Q5014725") || # PS4
+    regex(str(?plateform), "Q10680") # PS2 
+    )
+ SERVICE wikibase:label{
+   bd:serviceParam wikibase:language "[AUTO_LANGUAGE], fr"
+                   }
+}
+
